@@ -122,23 +122,17 @@ class SolarMax ( object ):
   def __connect(self):
     self.__disconnect()
     DEBUG('establishing connection to %s:%i...' % (self.__host, self.__port))
+	
     try:
-      # Python 2.5
-      self.__socket = socket.socket()
-      s = self.__socket
-      s.settimeout(2)
-      s.connect((self.__host, self.__port))
-      s.settimeout(10)
+    # Python 2.6
+    # Socket-timeout: 2 secs
+      self.__socket = socket.create_connection((self.__host, self.__port), 1)
       self.__connected = True
       DEBUG('connected.')
     except:
       DEBUG('connection to %s:%i failed' % (self.__host, self.__port))
       self.__connected = False
       self.__allinverters = False
-
-    # Python 2.6
-    ## Socket-timeout: 5 secs
-    #self.__socket = socket.create_connection((self.__host, self.__port), 5)
 
 
   # Utility functions
@@ -290,7 +284,7 @@ class SolarMax ( object ):
 
   def write_setting(self, inverter, data):
     rawdata = []
-    for key,value in data.iteritems():
+    for key,value in data.items():
       key = key.upper()
       if key not in query_types:
         raise ValueError('unknown type')
@@ -306,7 +300,7 @@ class SolarMax ( object ):
     result = result[1]
     errors = []
     if result['SAL'] > 0:
-      for (code, descr) in alarm_codes.iteritems():
+      for (code, descr) in alarm_codes.items():
         if code & result['SAL']:
           errors.append(descr)
 
@@ -342,7 +336,7 @@ class SolarMax ( object ):
       DEBUG('found all inverters:')
       DEBUG(self.__inverters)
     else:
-      DEBUG('not all invertes found, reconnection!')
+      DEBUG('not all inverters found, reconnecting!')
       self.__connect()
       
 
@@ -350,16 +344,4 @@ class SolarMax ( object ):
     if not self.__allinverters:
       self.detect_inverters()
     return self.__inverters
-
-  
-
-
-
-
-
-
-
-
-
-
 
