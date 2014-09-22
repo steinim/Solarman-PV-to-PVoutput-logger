@@ -17,16 +17,8 @@
 # for own use.
 # Released to the public in 2012.
 
-
-import time, sys, os
-from solarmax import SolarMax
-
-from sqlite3 import dbapi2 as sqlite
-DB_FILE=sys.argv[1]
-
 # Array of inverters in system. IP address and device number
-inverters = { '192.168.1.123': [1,]
-            }
+inverters = { '192.168.1.123': [1,]}
 
 
 smlist = []
@@ -40,9 +32,6 @@ allinverters = []
 for host in inverters.keys():
   allinverters.extend(inverters[host])
 
-dbconn = sqlite.connect(DB_FILE)
-db = dbconn.cursor()
-
 while True:
   pac_gesamt = 0.0
   daysum_gesamt = 0.0
@@ -55,7 +44,7 @@ while True:
         count += 1
       except:
         # Kommunikationsfehler, evtl. Wechselrichter aus
-        print 'Kommunikationsfehler, WR %i' % no
+        print 'Communication Error, WR %i' % no
         continue
     
       ivmax = ivdata['installed']
@@ -67,30 +56,15 @@ while True:
       if errors:
         print 'WR %i: %s (%s)' % (no, status, errors)
       
-
-      #print '''
-      #WR %i (%s)
-        #Status: %s
-        #Aktuell: %9.1f Watt / errechnet: %8.1f W (%i %% von %i Watt)
-        #P_DC:    %9.1f Watt (Wirkungsgrad: %i %%)
-        #Gesamt heute:   %8.1f   kWh
-        #Gesamt bisher:  %8.1f   kWh (seit %s)
-      #''' % (inverter, ivname, status, current['PAC'], PAC, percent, ivmax, PDC, int((float(PAC)/PDC) * 100), current['KDY'], current['KT0'], current['FDAT'].date())
       try:
         # Könnte gelocked sein
         # System ist 2 in diesem Fall. Fix.
-        db.execute('''INSERT INTO performance (time, inverter, system, pac, daysum, total) VALUES (strftime('%%s','now'), %i, 2, %i, %i, %i)'''
-                  % (inverter, int(current['PAC']), int(current['KDY']*1000), int(current['KT0']*1000)))
+        print("PAC = "+str(PAC))
       except:
         pass
-      pac_gesamt += current['PAC']
-      daysum_gesamt += current['KDY']
-  try:
-    dbconn.commit()
-  except:
-    pass
+
   if count < len(allinverters):
-    print 'Zu wenig Wechselrichter (%i < %i)' % (count, len(allinverters))
+    print 'Too little inverter (%i < %i)' % (count, len(allinverters))
 
   #print '='*80
   #print 'GESAMT:  %9.2f Watt    / Heute: %8.1f kWh' % (pac_gesamt, daysum_gesamt)
