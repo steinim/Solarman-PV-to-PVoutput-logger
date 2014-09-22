@@ -124,9 +124,8 @@ class SolarMax ( object ):
     DEBUG('establishing connection to %s:%i...' % (self.__host, self.__port))
 	
     try:
-    # Python 2.6
-    # Socket-timeout: 2 secs
-      self.__socket = socket.create_connection((self.__host, self.__port), 1)
+      # Socket-timeout: 5 secs
+      self.__socket = socket.create_connection((self.__host, self.__port), 10)
       self.__connected = True
       DEBUG('connected.')
     except:
@@ -257,7 +256,7 @@ class SolarMax ( object ):
     else:
       raise socket.timeout
     return None
-      
+
 
 
   def normalize_value(self, key, value):
