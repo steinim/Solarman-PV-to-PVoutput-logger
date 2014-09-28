@@ -18,7 +18,8 @@
 # Released to the public in 2012.
 
 
-import socket, datetime
+import socket
+import datetime
 
 # Constants - range of Inverters supported
 inverter_types = {
@@ -228,7 +229,7 @@ class SolarMax ( object ):
 
   def __send_query(self, querystring):
     try:
-      DEBUG(self.__host, '=>', querystring)
+        DEBUG(self.__host, '=>', querystring)
       self.__socket.send(querystring)
     except socket.timeout:
       self.__allinverters = False
