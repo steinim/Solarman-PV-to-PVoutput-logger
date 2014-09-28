@@ -124,8 +124,9 @@ class SolarMax ( object ):
     DEBUG('establishing connection to %s:%i...' % (self.__host, self.__port))
 	
     try:
-      # Socket-timeout: 5 secs
-      self.__socket = socket.create_connection((self.__host, self.__port), 10)
+    # Python 2.6
+    # Socket-timeout: 5 secs
+      self.__socket = socket.create_connection((self.__host, self.__port), 5)
       self.__connected = True
       DEBUG('connected.')
     except:
@@ -256,7 +257,7 @@ class SolarMax ( object ):
     else:
       raise socket.timeout
     return None
-
+      
 
 
   def normalize_value(self, key, value):
@@ -283,7 +284,7 @@ class SolarMax ( object ):
 
   def write_setting(self, inverter, data):
     rawdata = []
-    for key,value in data.items():
+    for key,value in data.iteritems():
       key = key.upper()
       if key not in query_types:
         raise ValueError('unknown type')
@@ -299,7 +300,7 @@ class SolarMax ( object ):
     result = result[1]
     errors = []
     if result['SAL'] > 0:
-      for (code, descr) in alarm_codes.items():
+      for (code, descr) in alarm_codes.iteritems():
         if code & result['SAL']:
           errors.append(descr)
 

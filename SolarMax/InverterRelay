@@ -36,14 +36,14 @@ for host in inverters.keys():
 
 count = 0
 for sm in smlist:
-  for (no, ivdata) in sm.inverters().items():
+  for (no, ivdata) in sm.inverters().iteritems():
     try:
       # Pass the parameters you wish to get from the inverter and log. Power, Voltage and Temp are all that's required for PVoutput.
       (inverter, current) = sm.query(no, ['PAC','UL1', 'TKK'])
       count += 1
     except:
-       print ('Communication Error, WR %i' % no)
-    continue
+      print 'Communication Error, WR %i' % no
+      continue
 
     ivmax = ivdata['installed']
     ivname = ivdata['desc']
@@ -55,14 +55,14 @@ for sm in smlist:
     (status, errors) = sm.status(no)
 
     if errors:
-      print ('WR %i: %s (%s)' % (no, status, errors))
+      print 'WR %i: %s (%s)' % (no, status, errors)
       try:
         print("details: ", int(PAC),int(TEMP),int(VOLTAGE))
       except:
         pass
 
 if count < len(allinverters):
-  print ('Not all inverters queried (%i < %i)' % (count, len(allinverters)))
+  print 'Not all inverters queried (%i < %i)' % (count, len(allinverters))
 
-
+time.sleep(5)
 
