@@ -20,6 +20,7 @@
 # Combined 2014 Matt Cordell <Solar@snoyowie.com>
 
 import time
+import sys
 from SolarMax.solarmax import SolarMax  # API for talking to the SolarMax inverter
 from PVoutput.pvoutput import PVoutput_Connection  # API for talking to the PVoutput inverter
 
@@ -103,5 +104,5 @@ if count < len(allinverters):
     print 'Not all inverters queried (%i < %i)' % (count, len(allinverters))
 
 print "Data Succesfully query and posted."
-time.sleep(5)
+time.sleep(1)
 
