@@ -229,7 +229,7 @@ class SolarMax ( object ):
 
   def __send_query(self, querystring):
     try:
-        DEBUG(self.__host, '=>', querystring)
+      DEBUG(self.__host, '=>', querystring)
       self.__socket.send(querystring)
     except socket.timeout:
       self.__allinverters = False
