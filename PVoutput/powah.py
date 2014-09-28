@@ -1,3 +1,4 @@
+import datetime
 import time
 import urllib2
 import urllib
@@ -8,14 +9,12 @@ import httplib
 
 pvo_host= "pvoutput.org"
 
-pvo_key = "" 
-pvo_systemid = ""                                  # Your PVoutput system ID here
+pvo_key = "93f95e447f74a678b492b6c459030bc433c64d69"
+pvo_systemid = "30465"                                  # Your PVoutput system ID here
 pvo_statusInterval = 5                                  # Your PVoutput status interval - normally 5, 10 (default) or 15
 
-sgDeviceId = ""
-sgUserId = ""
-sgPlantId = ""
-apiDelay = 61 # time to delay after API calls
+
+apiDelay = 5 # time to delay after API calls
 
 class Connection():
 	def __init__(self, api_key, system_id, host):
@@ -146,151 +145,24 @@ class Connection():
 
 		return conn.getresponse()
 
-def getSolarEnergyOutput():
-	start = time.strftime("%Y%m%d") + "00"
-	end = time.strftime("%Y%m%d") + "23"
-
-	response = urllib2.urlopen('http://www.solarinfobank.com/aapp/PlantDayChart?pid='+sgPlantId+'&startYYYYMMDDHH='+start+'&endYYYYMMDDHH='+end+'&chartType=line&lan=en-us')
-	webz = response.read()
-
-	stuff  = json.loads(webz)
-
-	if(stuff['isHasData']):
-		return stuff['categories'], stuff['series'][0]['data']
-	else:
-		return False
-
-def getSolarLastUpdateTime():
-	response = urllib2.urlopen('http://www.solarinfobank.com/aapp/UnitDevices?uid='+sgUserId+'&lan=en-us')
-	webz = response.read()
-
-	stuff  = json.loads(webz)
-
-	return str(stuff['units'][0]['devices'][0]['lastUpdatedTime'])
-	
-def getSolarTemps():
-	start = time.strftime("%Y%m%d") + "00"
-	end = time.strftime("%Y%m%d") + "23"
-
-	response = urllib2.urlopen('http://www.solarinfobank.com//aapp/MonitorDayChart?dId='+sgDeviceId+'&startYYYYMMDDHH='+start+'&endYYYYMMDDHH='+end+'&chartType=line&monitorCode=106&lan=en-us')
-	webz = response.read()
-
-	stuff  = json.loads(webz)
-
-	if(stuff['isHasData']):
-		return stuff['categories'], stuff['series'][0]['data']
-	else:
-		return False
-
-def getSolarETotal():
-	start = time.strftime("%Y%m%d") + "00"
-	end = time.strftime("%Y%m%d") + "23"
-
-	response = urllib2.urlopen('http://www.solarinfobank.com/aapp/MonitorDayChart?dId='+sgDeviceId+'&startYYYYMMDDHH='+start+'&endYYYYMMDDHH='+end+'&chartType=line&monitorCode=103&lan=en-us')
-	webz = response.read()
-
-	stuff  = json.loads(webz)
-
-	if(stuff['isHasData']):
-		return stuff['categories'], stuff['series'][0]['data']
-	else:
-		return False
-
-def getSolarVDC1():
-	start = time.strftime("%Y%m%d") + "00"
-	end = time.strftime("%Y%m%d") + "23"
-
-	response = urllib2.urlopen('http://www.solarinfobank.com/aapp/MonitorDayChart?dId='+sgDeviceId+'&startYYYYMMDDHH='+start+'&endYYYYMMDDHH='+end+'&chartType=line&monitorCode=109&lan=en-us')
-	webz = response.read()
-
-	stuff  = json.loads(webz)
-
-	if(stuff['isHasData']):
-		return stuff['categories'], stuff['series'][0]['data']
-	else:
-		return False
-
-def getSolarVDC2():
-	start = time.strftime("%Y%m%d") + "00"
-	end = time.strftime("%Y%m%d") + "23"
-
-	response = urllib2.urlopen('http://www.solarinfobank.com/aapp/MonitorDayChart?dId='+sgDeviceId+'&startYYYYMMDDHH='+start+'&endYYYYMMDDHH='+end+'&chartType=line&monitorCode=111&lan=en-us')
-	webz = response.read()
-
-	stuff  = json.loads(webz)
-
-	if(stuff['isHasData']):
-		return stuff['categories'], stuff['series'][0]['data']
-	else:
-		return False
-
 pvoutz = Connection(pvo_key, pvo_systemid, pvo_host)
-lastUpdate = 0
 
-while True:
-		# get stuff from sungrow
-		eOut = getSolarEnergyOutput()
-		garbage, temps = getSolarTemps()
-		garbage, eDay = getSolarETotal()
-		garbage, vdc1 = getSolarVDC1()
-		garbage, vdc2 = getSolarVDC2()
+# show console output
+powerdate = 20140928
+powerTime = datetime.datetime.now().time()
+PowerGeneration = 1234
+Temperature = 23.4
+Voltage = 210.7
 
-		if(eOut != False):
-			
-			# split times and powah
-			times, eOut = eOut
+print "Date: " + str(powerdate) + "Time: " + str(powerTime) + " W: " + str(PowerGeneration) + " temp: " + str(Temperature) + " volt: " + str(Voltage)
 
-			# find current record number
-			lastIndex = 0
-			for (i, item) in enumerate(eOut):
-				if(item != None):
-					lastIndex = i + 1
+# update pvoutput
+if(PowerGeneration): # make sure that we have actual values...
+    pvoutz.add_status(powerdate, powerTime, power_exp=PowerGeneration, temp=str(Temperature), vdc=str(Voltage))
+    print "Sucessful Log "
+	#Ensure API limits adhered to
+    time.sleep(apiDelay)
+else:
+	print "aint no data bitch.. make the sun come up"
 
-			# find first update for the set
-			firstIndex = 0
-			for (i, item) in enumerate(eOut):
-				if(item != None):
-					firstIndex = i + 1
-					break
-
-			# push index to the last valid thingy for today, only on first run
-			if(lastUpdate == 0):
-				PVOStatus = pvoutz.get_status()
-				print "Getting current status...."
-				time.sleep(apiDelay) # api limit non-fuck
-				date = PVOStatus.split(",")[0]
-				timez = PVOStatus.split(",")[1]
-				if(date == time.strftime("%Y%m%d")):
-					lastUpdate = times.index(timez)
-
-		    # sanity, on first run through we set last update to the first value
-			if((lastUpdate == 0) or (lastUpdate > lastIndex)):
-				lastUpdate = firstIndex
-				print "resetting for new day or first run"
-
-			for x in range(lastUpdate, lastIndex):
-				#grab current values of interest
-				powerTime = times[x]
-				powerOut = eOut[x]
-				cumulative = eDay[x]
-				temp = temps[x]
-				vdc = (vdc1[x] + vdc2[x])/2
-
-				# show console output
-				print "Time: " + str(powerTime) + " KW: " + str(powerOut) + " e-day: " + str(cumulative) + " temp: " + str(temp) + " vdc: " + str(vdc)
-				
-				# update pvoutput
-				if(powerOut and cumulative): # make sure that we have actual values...
-					pvoutz.add_status(time.strftime("%Y%m%d"), powerTime, power_exp=powerOut * 1000, energy_exp=cumulative * 1000, temp=str(temp), vdc=str(vdc))
-					# dont fuck up API limits
-					time.sleep(apiDelay)
-
-				
-			
-			# update lastUpdate value
-			lastUpdate = lastIndex
-		else:
-			print "aint no data bitch.. make the sun come up"
-
-		time.sleep(300)
-		print "waiting for new data..."
+print "Data Posted"
