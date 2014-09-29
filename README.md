@@ -9,7 +9,7 @@ This project heavily leverages the existing work of the following:
 * The python interface to pvout.org API was forked from sungrow2pvoutput (https://github.com/kronicd/sungrow2pvoutput)
   Which itself was based on code from PV - https://github.com/blebo/pv/blob/master/pv/pvoutput.py & http://pv.codeplex.com/
   This interface is independant of the inverter brand, so would be useful to anyone.
-* Data interface developed by Bernd Wurst - git://git.schokokeks.org/python-solarmax.git
+* Data interface to the SolarMax inverter was developed by Bernd Wurst - git://git.schokokeks.org/python-solarmax.git
   I've translated this from German to English (using GoogleTranslate).
 
 My plan is to have this running on a Raspberry Pi. Which I'll document more once done.
