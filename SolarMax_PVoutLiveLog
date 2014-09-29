@@ -31,7 +31,7 @@ inverters = {'192.168.1.123': [1, ]}
 
 # get pvoutput API details
 apiDelay = 5  # time to delay after API calls
-# API Key and SystemId should be entered as arguments for script.
+# API Key and SystemId must be entered as arguments for script.
 
 if len(sys.argv) != 3:
     print "2 arguments required. API key and SystemId. See Documentation for details"
@@ -40,11 +40,6 @@ if len(sys.argv) != 3:
 else:
     pvo_key = str(sys.argv[1])
     pvo_systemid = str(sys.argv[2])
-
-    print 'Number of arguments:', len(sys.argv)-1, 'arguments.'
-    print 'Argument List:',
-    print 'API Key: ' + pvo_key
-    print 'System ID: '+ pvo_systemid
 
 smlist = []
 for host in inverters.keys():
@@ -90,15 +85,14 @@ for sm in smlist:
         except:
             print 'Communication Error, WR %i' % no
             continue
+#(status, errors) = sm.status(count)
 
-(status, errors) = sm.status(no)
-
-if errors:
-    print('WR %i: %s (%s)' % (no, status, errors))
-    try:
-        print("details: ", int(PAC), int(TEMP), int(VOLTAGE))
-    except:
-        pass
+#if errors:
+#    print('WR %i: %s (%s)' % (no, status, errors))
+#    try:
+#        print("details: ", int(PAC), int(TEMP), int(VOLTAGE))
+#    except:
+#        pass
 
 if count < len(allinverters):
     print 'Not all inverters queried (%i < %i)' % (count, len(allinverters))
