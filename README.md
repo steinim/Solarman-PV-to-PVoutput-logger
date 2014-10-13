@@ -12,4 +12,4 @@ This project heavily leverages the existing work of the following:
 * Data interface to the SolarMax inverter was developed by Bernd Wurst - git://git.schokokeks.org/python-solarmax.git
   I've translated this from German to English (using GoogleTranslate).
 
-My plan is to have this running on a Raspberry Pi. Which I'll document more once done.
+About the most cost effective (low power) way to run this is on something like a Raspberry Pi. [Instructions Here](https://github.com/MattCordell/SolarMax_PVoutputLogger/wiki/Raspberry-Pi-Setup)
