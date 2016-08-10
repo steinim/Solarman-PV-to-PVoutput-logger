@@ -33,7 +33,7 @@ if sys.version_info < (2, 7):
 # pvoutput specifics
 # time to delay between API calls
 apiDelay = 5
-appVersion = 0.2
+appVersion = 0.3
 
 # parameters (with defaults)
 debug = False
@@ -67,8 +67,10 @@ smpv.setDebug(debug)
 power_details = smpv.getPower(datetime.date.today().strftime("%Y-%m-%d"), True)
 if power_details is not None:
 	power = power_details['power']
-	power_date = datetime.datetime.strptime(power_details['time'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y%m%d")
-	power_time = utc_to_local(datetime.datetime.strptime(power_details['time'], "%Y-%m-%dT%H:%M:%SZ")).strftime("%H:%M")
+	# need to convert date and time value from UTC to local time before uploading to pvoutput.org
+	power_datetime_local = utc_to_local(datetime.datetime.strptime(power_details['time'], "%Y-%m-%dT%H:%M:%SZ"))
+	power_date = power_datetime_local.strftime("%Y%m%d")
+	power_time = power_datetime_local.strftime("%H:%M")
 
 	DEBUG('power == ' + str(power) + ' and power_date == ' + power_date)
 
