@@ -41,6 +41,7 @@ class PVoutput_Connection():
 			params['op'] = import_offpeak
 		if import_shoulder:
 			params['is'] = import_shoulder
+		params = urllib.urlencode(params)
 
 		response = self.make_request('POST', path, params)
 
