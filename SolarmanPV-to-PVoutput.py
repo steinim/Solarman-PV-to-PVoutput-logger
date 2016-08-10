@@ -78,7 +78,7 @@ if power_details is not None:
 		# update pvoutput - but only if there is a value power value (i.e. > 0)
 
 		# add_output() is for end of day output - therfore the peak power, pear time, etc
-	#	pvout.add_output(power_date, generated=power)
+#		pvout.add_output(power_date, generated=power)
 
 		if power > 0:
 			pvout.add_status(power_date, power_time, power_exp=power)
