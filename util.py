@@ -16,11 +16,14 @@
 # Developed 2016 by Christopher McAvaney <christopher.mcavaney@gmail.com>
 
 import datetime, calendar
+import sys
 
 # Auxiliary routine
 def DEBUG(*s):
 	out = [datetime.datetime.now().isoformat() + ':',] + [str(x) for x in s]
-	print(' ' . join(out))
+	# only output when run at the command line, not from a cron job or redirection, etc
+	if sys.stdout.isatty():
+		print(' ' . join(out))
 
 def utc_to_local(utc_dt):
 	# get integer timestamp to avoid precision lost
