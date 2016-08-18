@@ -63,6 +63,9 @@ pvo_system_id = args.pvo_system_id
 # Create the SolarmanAPI object
 smpv = SolarmanPVAPI(client_id, client_secret, plant_id)
 smpv.setDebug(debug)
+if smpv.connected is not True:
+	print 'An issue with connection to the SolarmanPV API'
+	sys.exit(1)
 
 power_details = smpv.getPower(datetime.date.today().strftime("%Y-%m-%d"), True)
 if power_details is not None:
@@ -85,12 +88,12 @@ if power_details is not None:
 		if power > 0:
 			pvout.add_status(power_date, power_time, power_exp=power)
 		else:
-			print 'no need to update - power %dW' % power
+			DEBUG('no need to update - power %dW' % power)
 	except:
 		print 'An error with PVoutput ', sys.exc_info()[0]
 		raise
 else:
-	print 'invalid data from SolarmanPV API'
+	print 'Invalid data from SolarmanPV API - no further action'
 
 # temporary exit, looking to include voltage and current data - but need to find out why the current day data doesn't come back through the API
 sys.exit(5)
