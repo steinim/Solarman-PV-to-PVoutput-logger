@@ -133,4 +133,10 @@ class PVoutput_Connection():
 				}
 		conn.request(method, path, params, headers)
 
-		return conn.getresponse()
+		try:
+			response = conn.getresponse()
+		except httplib.BadStatusLine as e:
+			print '%s: request failed - %s' % (self.__class__.__name__, e)
+			response = False
+
+		return response
