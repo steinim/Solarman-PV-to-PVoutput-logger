@@ -2,8 +2,10 @@ SolarmanPV API to PVoutput Logger
 =================================
 Solarman PV details:
 http://www.solarmanpv.com/index_en.html
+
 Solarman PV portal details:
 http://www.solarmanpv.com/en-us/solarmanweb.html
+
 Demo account view:
 http://www.solarmanpv.com/portal/Terminal/TerminalDefault.aspx
 
