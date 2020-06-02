@@ -83,7 +83,7 @@ class SolarmanPVAPI:
 
 		# Get the power data for a specified date or today
 		url = solarman_pv_api_base + '/plant/power'
-		params = {'plant_id':self.__plant_id, 'date':date_to_retrieve, 'timezone_id':'Australia/Canberra'}
+		params = {'plant_id':self.__plant_id, 'date':date_to_retrieve, 'timezone_id':'Europe/Amsterdam'}
 		try:
 			response = requests.get(url, verify=self.__requests_verify, headers=self.__auth_headers, params=params)
 		except requests.exceptions.ConnectionError as e:
